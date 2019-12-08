@@ -52,4 +52,13 @@ public class Sector implements Serializable {
         return new ObjectMapper().writeValueAsString(this);
     }
 
+    public Entity getEntity(int x, int y) {
+        for (Entity i : entities) {
+            if ( (i.getXPosition()==x) && (i.getYPosition() == y) ) {
+                return i;
+            }
+        }
+        return null;
+    }
+
 }

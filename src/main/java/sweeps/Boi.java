@@ -7,6 +7,9 @@ public class Boi extends Entity{
     private boolean isDead = false;
 
     public static final float MOVEMENT_COST = 1;
+    public static final float EAT_AMOUNT = 5;
+    public static final float EAT_COST = 1;
+
     public static enum  Direction{
         north,
         south,
@@ -51,6 +54,42 @@ public class Boi extends Entity{
         }
         else return false;
 
+    }
+
+    public boolean eat(Direction direction) throws InvalidPositionException {
+
+        int newX = getXPosition();
+        int newY = getYPosition();
+
+        switch (direction) {
+            case north:
+                newY++;
+                break;
+
+            case south:
+                newY--;
+                break;
+
+            case east:
+                newX++;
+                break;
+
+            case west:
+                newX--;
+                break;
+        }
+        Entity opp = Map.getSector(getSectorX(), getSectorY()).getEntity(newX, newY);
+        if (opp != null) {
+            if (opp.getEnergy() >= EAT_AMOUNT) {
+                opp.setEnergy(opp.getEnergy()-EAT_AMOUNT);
+                setEnergy(getEnergy()+EAT_AMOUNT-EAT_COST);
+            } else {
+                setEnergy(getEnergy()+opp.getEnergy()-EAT_COST);
+                opp.setEnergy(0);
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override

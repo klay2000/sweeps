@@ -39,7 +39,7 @@ public class API {
     String createInitialBoi(@RequestBody CreateBoiJSON json) throws NoSuchAlgorithmException, JsonProcessingException, InvalidPositionException {
         Profile profile = Profiles.getProfile(json.key);
         if(profile.getOwned().size() == 0){
-            Entity e = new Boi(json.x, json.y, json.sectorX, json.sectorY, 250);
+            Entity e = new Boi(json.x, json.y, json.sectorX, json.sectorY, 25);
             profile.getOwned().add(e);
             return new ObjectMapper().writeValueAsString(e);
         }
@@ -79,7 +79,10 @@ public class API {
             case "move":
                 ((Boi)e).moveBoi(direction);
                 return new ObjectMapper().writeValueAsString("success");
-        }
+
+            case "eat":
+                ((Boi)e).eat(direction);
+                return new ObjectMapper().writeValueAsString("success");
 
         return new ObjectMapper().writeValueAsString("failure");
     }

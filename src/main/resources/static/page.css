@@ -1,4 +1,10 @@
 canvas #mapCanv {
+    potition: absolute;
     height: 500px;
     width: 500px;
+}
+
+button #getKey {
+    position: absolute;
+    margin: 0 0;
 }
