@@ -83,10 +83,10 @@ public class API {
             case "eat":
                 ((Boi)e).eat(direction);
                 return new ObjectMapper().writeValueAsString("success");
+        }
 
         return new ObjectMapper().writeValueAsString("failure");
     }
-
 
 
 }

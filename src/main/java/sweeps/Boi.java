@@ -78,7 +78,7 @@ public class Boi extends Entity{
                 newX--;
                 break;
         }
-        Entity opp = Map.getSector(getSectorX(), getSectorY()).getEntity(newX, newY);
+        Entity opp = getSector().getEntity(newX, newY);
         if (opp != null) {
             if (opp.getEnergy() >= EAT_AMOUNT) {
                 opp.setEnergy(opp.getEnergy()-EAT_AMOUNT);
