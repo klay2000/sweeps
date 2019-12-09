@@ -1,17 +1,26 @@
 <!DOCTYPE HTML>
 <html>
-    <head>
-	<script src="frontpage.js" ></script>
-	<link rel="stylesheet" href="page.css">
-	<script type="text/javascript">
-	  getMap();
-	</script>
-    </head>
-    <body>
-
-	<div>
-	    <canvas height=630px width=630px id="mapCanv" ></canvas>
-	    <button id="getKey" onclick="window.location.href='/apikey.html'"><marquee>Get your FREE! API! KEY! HERE!</marquee></button>
-	</div>
-    </body>
+  <head>
+    <script src="frontpage.js" ></script>
+    <link rel="stylesheet" href="page.css">
+    <script type="text/javascript">
+      getMap();
+    </script>
+  </head>
+  <body>
+    <div class="backdrop">
+      <div class="tabBar">
+	<button>View the world map</button>
+	<button class="getKey" onclick="window.location.href='/apikey.html'">Get an API key</button>
+	<button>FAQ</button>
+	<button>Documentation</button>
+      </div>
+      <div class="mapContainer">
+	<canvas height=630px width=630px id="mapCanv" ></canvas>
+      </div>
+      <div class="about">
+	<h3>What is Sweeps?</h3>
+      </div>
+    </div>
+  </body>
 </html>

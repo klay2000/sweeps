@@ -1,10 +1,53 @@
-canvas #mapCanv {
-    potition: absolute;
-    height: 500px;
-    width: 500px;
+html body {
+    margin: 0 0;
+    padding: 0 0;
 }
 
-button #getKey {
-    position: absolute;
-    margin: 0 0;
+.backdrop {
+    margin: 0;
+    height: 100%;
+    background-color: #6600ff;
+    padding: 5px 5px;
+}
+
+.mapContainer {
+    margin: auto;
+    background-color: #ffffff;
+    width: 500px;
+    height: 500px;
+}
+
+#mapCanv {
+    padding: 1px 1px 1px 1px;
+    width: 100%;
+    height: inherit;
+}
+
+.getKey {
+}
+
+.tabBar {
+    overflow: hidden;
+    background-color: #1f1f1f;
+    border: 1px solid;
+    margin: 0px 0px 20px 0px;
+}
+.tabBar button {
+    width: 25%;
+    color: white;
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px 7px;
+}
+.tabBar button:hover {
+    background-color: #3f3f3f;
+}
+
+.about {
+    text-align: center;
+    width: 1000px;
+    margin: 0 auto;
 }
