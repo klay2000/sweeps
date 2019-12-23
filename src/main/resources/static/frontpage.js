@@ -1,64 +1,12 @@
-document.onload = function() {
-    getMap();
-}
-
-var getJSON = function(url, callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.responseType = 'json';
-    xhr.onload = function() {
-	var status = xhr.status;
-	if (status === 200) {
-	    callback(null, xhr.response);
-	} else {
-	    callback(status, xhr.response);
-	}
-    };
-    xhr.send();
-};
-
 function getMap() {
-    getJSON('/api/getMap', function(err, data) {
-	console.log(data);
-	renderMap(data);
-	drawTheBoiz(data);
-    });
-}
-
-function renderMap(data) {
-    var canvas = document.getElementById("mapCanv");
-    var ctx=canvas.getContext("2d");
     getSector(1, 1, function(err, data) {
-	var sectorMap = data.map;
-	ctx.fillStyle = '#000000';
-	for (var x=0; x < 25; x++) {
-	    for (var y=0; y < 25; y++) {
-		ctx.beginPath();
-		ctx.rect(25*x, 25*y, 25, 25);
-		(sectorMap[x][y] == 1) ? ctx.fill() : ctx.stroke();
-	    }
-	}
+	renderMap(data);
 	drawTheBoiz(data.entities);
     });
 }
 
-function drawTheBoiz(entities) {
-    console.log(entities);
-    var canvas = document.getElementById("mapCanv");
-    var ctx = canvas.getContext("2d");
-    for (var i=0; i<entities.length; i++) {
-	if (entities[i].type == "energy_source") {
-	    ctx.fillStyle = '#FFFF00';
-	}
-	if (entities[i].type == "boi") {
-    	    ctx.fillStyle = '#007733';
-    }
-	let cx = 25*entities[i].xposition+13;
-	let cy = 25*entities[i].yposition+13;
-	ctx.beginPath();
-	ctx.arc(cx, cy, 12, 0, 2*Math.PI);
-	ctx.fill();
-    }
+document.onload = function() {
+    getMap();
 }
 
 function getSector(x, y, callback) {
@@ -76,6 +24,60 @@ function getSector(x, y, callback) {
 	}
     };
 }
+
+var getJSON = function(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.responseType = 'json';
+    xhr.onload = function() {
+	var status = xhr.status;
+	if (status === 200) {
+	    callback(null, xhr.response);
+	} else {
+	    callback(status, xhr.response);
+	}
+    };
+    xhr.send();
+};
+
+
+function renderMap(data) {
+    console.log(data);
+    var grid = document.getElementsByClassName("map-container");
+    for (var y=0; y < 25; y++) {
+	for (var x=0; x < 25; x++) {
+	    var el = document.createElement("div");
+	    el.className="cell-container"
+	    var c = document.createElement("img");
+	    c.id = x + " " + y;
+	    c.class = "cell-block";
+	    el.appendChild(c);
+	    grid[0].appendChild(el);
+
+	    if (data['map'][x][y] == 1) {
+		el.className += " active-cell";
+	    } else {
+		el.className += " inactive-cell";
+	    }
+	}
+    }
+}
+
+function drawTheBoiz(entities) {
+    console.log(entities);
+    for (var i=0; i<entities.length; i++) {
+	var img = document.getElementById(entities[i].xposition + " " + entities[i].yposition);
+	if (entities[i].type == "energy_source") {
+	    img.src = "assets/bolt.svg";
+	}
+	if (entities[i].type == "boi") {
+	    img.style.height = "30px";
+	    img.style.width = "30px";
+	    img.src = "assets/boi.svg";
+	}
+    }
+}
+
 
 
 function getApiKey() {

@@ -10,20 +10,28 @@ html body {
     padding: 5px 5px;
 }
 
-.mapContainer {
+.map-container {
     margin: auto;
     background-color: #ffffff;
     width: 500px;
     height: 500px;
+    display: grid;
+    grid-gap: 0px;
+    grid-template-columns: repeat(25, 20px);
+    grid-template-rows: repeat(25, 20px);
 }
-
-#mapCanv {
-    padding: 1px 1px 1px 1px;
-    width: 100%;
-    height: inherit;
+.cell-container {
+    display: inline-block;
 }
-
-.getKey {
+.cell-container > img {
+    height: 20px;
+    width: 20px;
+}
+.active-cell {
+    background-color: black;
+}
+.inactive-cell {
+    background-color: white;
 }
 
 .tabBar {
