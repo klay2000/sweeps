@@ -71,8 +71,6 @@ function drawTheBoiz(entities) {
 	    img.src = "assets/bolt.svg";
 	}
 	if (entities[i].type == "boi") {
-	    img.style.height = "30px";
-	    img.style.width = "30px";
 	    img.src = "assets/boi.svg";
 	}
     }
