@@ -1,6 +1,6 @@
 package progmmo.server.entity;
 
-public class Entity {
+public abstract class Entity {
 
     private String ID;
 
