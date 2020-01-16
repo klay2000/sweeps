@@ -22,11 +22,15 @@ public class ServerApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        repository.save(new APIKey("bloop", "123"));
-        repository.save(new APIKey("bleep", "123"));
-        repository.save(new APIKey("blop", "123"));
+        repository.save(new APIKey("bleep", APIKey.generateHash("bleep", "123")));
 
-        //System.out.println(repository.findByPrefix("bleep"));
+        System.out.println(repository.findByPrefix("bleep").getPrefix());
+
+        repository.deleteByPrefix("bleep");
+
+        System.out.println("WILL CRASH");
+
+       // System.out.println(repository.findByPrefix("bleep").getPrefix());
 
     }
 }

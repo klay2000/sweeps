@@ -12,4 +12,6 @@ public interface APIKeyRepository extends MongoRepository<APIKey, String> {
     List<APIKey> findAll();
 
     APIKey findByPrefix(String prefix);
+
+    void deleteByPrefix(String prefix);
 }

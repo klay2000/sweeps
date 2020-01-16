@@ -10,17 +10,12 @@ import java.security.NoSuchAlgorithmException;
 @Document
 public class APIKey {
 
-    public APIKey(String prefix, String key){
+    public APIKey(String prefix, byte[] hash){
 
         if(prefix.length() > 25) this.prefix = prefix.substring(0, 25);
         else this.prefix = prefix;
 
-        try {
-            MessageDigest hasher = MessageDigest.getInstance("SHA-256");
-
-            hash = hasher.digest((prefix+key).getBytes("UTF_16"));
-
-        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) { e.printStackTrace(); }
+        this.hash = hash;
 
     }
 
@@ -28,4 +23,19 @@ public class APIKey {
 
     @Indexed(unique = true, name = "Index")
     private String prefix;
+
+    public static byte[] generateHash(String prefix, String key) {
+        try {
+            MessageDigest hasher = MessageDigest.getInstance("SHA-256");
+
+            return hasher.digest((prefix+key).getBytes("UTF_16"));
+
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) { e.printStackTrace();}
+
+        return new byte[0];
+    }
+
+    public String getPrefix(){
+        return prefix;
+    }
 }
