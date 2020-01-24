@@ -4,16 +4,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import progmmo.server.apikey.APIKey;
 import progmmo.server.apikey.APIKeyRepository;
+import progmmo.server.command.Command;
+import progmmo.server.command.CommandRepository;
+import progmmo.server.entity.Entity;
+import progmmo.server.entity.EntityRepository;
+import progmmo.server.utils.CommandType;
+import progmmo.server.utils.Direction;
 
 @SpringBootApplication
 public class ServerApplication implements CommandLineRunner {
 
     @Autowired
-    private APIKeyRepository repository;
+    private APIKeyRepository apiKeyRepository;
+
+    @Autowired
+    private CommandRepository commandRepository;
 
     public static void main(String [] args) {
         SpringApplication.run(ServerApplication.class, args);
@@ -22,15 +29,9 @@ public class ServerApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        repository.save(new APIKey("bleep", APIKey.generateHash("bleep", "123")));
-
-        System.out.println(repository.findByPrefix("bleep").getPrefix());
-
-        repository.deleteByPrefix("bleep");
-
-        System.out.println("WILL CRASH");
-
-       // System.out.println(repository.findByPrefix("bleep").getPrefix());
+//        apiKeyRepository.save(new APIKey("bleep", APIKey.generateHash("bleep", "123")));
+//
+//        commandRepository.save(new Command(Direction.north, CommandType.attack, "1"));
 
     }
 }

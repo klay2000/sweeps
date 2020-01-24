@@ -1,5 +1,6 @@
 package progmmo.server.apikey;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -7,7 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-@Document
+@Document(collection = "apikey")
 public class APIKey {
 
     public APIKey(String prefix, byte[] hash){
@@ -21,8 +22,10 @@ public class APIKey {
 
     private byte[] hash;
 
-    @Indexed(unique = true, name = "Index")
+    @Indexed(unique = true, name = "APIKey_Prefix_Index")
     private String prefix;
+
+    private int entitiesCreated = 0;
 
     public static byte[] generateHash(String prefix, String key) {
         try {
@@ -37,5 +40,13 @@ public class APIKey {
 
     public String getPrefix(){
         return prefix;
+    }
+
+    public int getEntitiesCreated(){
+        return entitiesCreated;
+    }
+
+    public int getEntityIndex(){
+        return entitiesCreated++;
     }
 }

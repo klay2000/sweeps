@@ -1,4 +1,9 @@
 package progmmo.server.command;
 
-public interface CommandRepository {
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface CommandRepository extends MongoRepository<Command, String> {
+
 }
