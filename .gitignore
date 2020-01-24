@@ -1,2 +1,2 @@
-target/
-resources/application.properties
+**/target/
+**/resources/application.properties
