@@ -1,6 +1,5 @@
-FROM debian:latest
-WORKDIR /app
+FROM openjdk:latest
 ENV WORLD_SEED 110101001101
-RUN git clone http://github.com/sarenord/sweeps
-RUN cd sweeps
-CMD ["mvn", "install", "&&", "java", "-jar", "target/"]
+COPY target/server-0.0.1-SNAPSHOT.jar server.jar
+CMD [ "java", "-jar", "server.jar" ]
+EXPOSE 443
