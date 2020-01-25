@@ -11,7 +11,7 @@ def check_dependencies(deps):
             client.images.pull(i)
 
 
-dependencies = ["mongo:latest"]
+dependencies = ["mongo:latest", "openjdk:latest"]
 check_dependencies(dependencies)
 
 # build the container. This was originally in check_dependencies, but I think that the container should be rebuilt on every deploy
