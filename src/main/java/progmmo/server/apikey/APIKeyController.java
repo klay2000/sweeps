@@ -43,11 +43,11 @@ public class APIKeyController {
             emailSender.sendEmail(email, "API Key", "Hi " + prefix + "!\nYour APIKey is " + prefix+key + " Please save this key somewhere as it is unrecoverable if lost!");
             repository.save(new APIKey(prefix, email, APIKey.generateHash(prefix, key)));
         } catch (MessagingException e){
-            response.put("response", "Invalid email address.");
+            e.printStackTrace();
         }
 
 
-        response.put("response", "Success! You should receive an email with your api key shortly.");
+        response.put("response", "Success! You should receive an email at " + email + " with your api key shortly!");
 
         return response;
     }
