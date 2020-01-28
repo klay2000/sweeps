@@ -5,5 +5,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CommandRepository extends MongoRepository<Command, String> {
-
+    Command getByEntityID(String EntityID);
+    Command deleteByEntityID(String EntityID);
 }

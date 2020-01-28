@@ -10,5 +10,6 @@ public interface EntityRepository extends MongoRepository<Entity, String> {
 
     Entity findByID(String ID);
     List<Entity> findBySector(String sector);
+    List<Entity> findByOwnerPrefix(String ownerPrefix);
 
 }

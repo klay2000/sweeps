@@ -13,5 +13,7 @@ public interface APIKeyRepository extends MongoRepository<APIKey, String> {
 
     APIKey findByPrefix(String prefix);
 
+    APIKey findByHash(byte[] hash);
+
     void deleteByPrefix(String prefix);
 }
