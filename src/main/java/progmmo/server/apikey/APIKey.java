@@ -11,8 +11,6 @@ import java.security.NoSuchAlgorithmException;
 @Document(collection = "apikey")
 public class APIKey {
 
-    private static final int APIKEY_LENGTH = 20; //Todo: convert to a setting.
-
     public APIKey(String prefix, String email, byte[] hash){
 
         if(prefix.length() > 25) this.prefix = prefix.substring(0, 25);
@@ -56,16 +54,15 @@ public class APIKey {
         return new byte[0];
     }
 
-    public static String generateRandomKey(){
-        String salt = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789";
+    public static byte[] generateHash(String key) {
+        try {
+            MessageDigest hasher = MessageDigest.getInstance("SHA-256");
 
-        String key = "";
+            return hasher.digest((key).getBytes("UTF_16"));
 
-        for(int i = 0; i < APIKEY_LENGTH; ++i){
-            key += salt.charAt((int)(Math.random()*salt.length()));
-        }
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) { e.printStackTrace();}
 
-        return key;
+        return new byte[0];
     }
 
 }

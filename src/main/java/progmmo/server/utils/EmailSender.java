@@ -5,8 +5,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import progmmo.server.config.EmailConfig;
 
-import javax.mail.*;
-import javax.mail.internet.AddressException;
+import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
@@ -17,7 +19,7 @@ public class EmailSender {
     @Autowired
     private EmailConfig eConf;
 
-    public void sendEmail(String recipient, String subject, String body) throws MessagingException {
+    public void sendEmail(String recipient, String subject, String body){
         Properties prop = System.getProperties();
 
         prop.put("mail.smtp.host", eConf.getHost());
@@ -30,6 +32,8 @@ public class EmailSender {
                 return new PasswordAuthentication(eConf.getAddress(), eConf.getPassword());
             }
         });
+
+        try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(eConf.getAddress()));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
@@ -37,6 +41,7 @@ public class EmailSender {
             message.setSubject(subject);
             message.setText(body);
             Transport.send(message);
+        } catch (Exception e){ e.printStackTrace(); };
     }
 
 }
