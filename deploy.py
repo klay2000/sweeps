@@ -15,12 +15,13 @@ def init_mongo(ip='172.17.0.2'):
         'mongo',
         ports=[27017],
         detach=True,
+        hostname="mongo",
         networking_config=llApiClient.create_networking_config({
-            'dblan': llApiClient.create_endpoint_config(ipv4_address='172.17.0.2', aliases=['mongo'])
+            'dblan': llApiClient.create_endpoint_config(ipv4_address='172.17.0.2',
+                                                        aliases=['mongo']),
         })
     )
     return client.containers.get(container_id)
-
 
 # make sure host has all necessary containers
 def check_dependencies(deps):
@@ -61,6 +62,7 @@ def main():
 
     if not("mongo:latest" in host_containers):
         mongo = init_mongo()
+        print(mongo.logs())
 
     progmmo = client.containers.run("progmmo:latest",
                                     network=dblan.id,
@@ -81,3 +83,9 @@ if __name__ == "__main__":
     if args.images:
         clean_images()
     main()
+    host_images = [ n.tags[0] for n in client.images.list() ]
+    for i in deps:
+        if not(i in host_images):
+            print("pulling image: ", i)
+            client.images.pull(i)
+
