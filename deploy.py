@@ -51,29 +51,22 @@ def clean_images():
 
 
 def main():
-    dependencies = ["mongo:latest", "openjdk:latest"]
-    check_dependencies(dependencies)
-    if not("progmmo:latest" in host_images):
+    check_dependencies(["mongo:latest", "openjdk:latest"])
+    if not("progmmo" in host_images):
         print("building progmmo container")
-        client.images.build(path=".", tag="progmmo:latest")
+        client.images.build(path=".", tag="progmmo")
         print("container built successfully")
 
-    # docker will create duplicate networks without protest so this check needs to be here
-    if not("dblan" in [n.name for n in client.networks.list() ]):
-        print("creating network")
-        client.networks.create("dblan", driver="bridge", internal=True)
-
     # assemble everything into networks
-    dblanar = list(filter(lambda n: n.name == "dblan", client.networks.list()))
-    dblan = dblanar[0]
-
+    # docker will create duplicate networks without protest so this check needs to be here
+    dblan = filter(lambda n: n.name == "dblan", client.networks.list()).__next__() if "dblan" in [n.name for n in client.networks.list() ] else client.networks.create("dblan", driver="bridge", internal=True)
     mongo = init_mongo() if not("mongo:latest" in host_containers) else client.containers.get("mongodb")
-    print([i.name for i in client.containers.list() if i.name != None])
     progmmo = client.containers.run("progmmo",
                                     network=dblan.id,
                                     ports={'80/tcp':8080},
                                     name="progmmo",
-                                    detach=True)
+                                    detach=True,
+                                    hostname="progmmo")
     print("launching container")
     for l in progmmo.logs():
         print(l)
