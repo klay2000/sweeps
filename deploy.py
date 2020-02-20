@@ -11,17 +11,6 @@ host_containers = [ n for n in client.containers.list(all=True) ]
 
 
 def init_mongo(ip='172.17.0.2'):
-    # container = llApiClient.create_container(
-    #     'mongo',
-    #     ports=[27017],
-    #     detach=True,
-    #     hostname="mongo",
-    #     name="mongodb",
-    #     networking_config=llApiClient.create_networking_config({
-    #         'dblan': llApiClient.create_endpoint_config(ipv4_address='172.17.0.2',
-    #                                                     aliases=['mongo']),
-    #     })
-    # )
     print("initializing mongo")
     container = client.containers.run("mongo",
                                       hostname="mongodb",
@@ -49,6 +38,14 @@ def clean_images():
     for i in host_images:
         client.images.remove(i.id, force=True)
 
+def init_networks():
+    # TODO: finish fixing up this networking shit
+    net = client.networks.create("dblan",
+                                   driver="overlay",
+                                   internal=False,
+                                   check_duplicate=True
+                                   )
+    return net
 
 def main():
     check_dependencies(["mongo:latest", "openjdk:latest"])
@@ -59,17 +56,19 @@ def main():
 
     # assemble everything into networks
     # docker will create duplicate networks without protest so this check needs to be here
-    dblan = filter(lambda n: n.name == "dblan", client.networks.list()).__next__() if "dblan" in [n.name for n in client.networks.list() ] else client.networks.create("dblan", driver="bridge", internal=True)
+    try:
+        nets = init_networks()
+    except:
+        nets = client.networks.list()
+
     mongo = init_mongo() if not("mongo:latest" in host_containers) else client.containers.get("mongodb")
     progmmo = client.containers.run("progmmo",
-                                    network=dblan.id,
-                                    ports={'80/tcp':8080},
+                                    network="dblan",
+                                    ports={'8080/tcp':8080, '443/tcp':443},
                                     name="progmmo",
                                     detach=True,
                                     hostname="progmmo")
     print("launching container")
-    for l in progmmo.logs():
-        print(l)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
