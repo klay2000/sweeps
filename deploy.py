@@ -9,7 +9,7 @@ host_images = [ n for n in client.images.list(all=True) if not(n.tags == [])]
 host_containers = [ n for n in client.containers.list(all=True) ]
 
 
-def init_mongo(ip='172.17.0.2'):
+def init_mongo():
     print("initializing mongo")
     if "mongodb" in [n.name for n in client.containers.list(all=True)]:
         return client.containers.get("mongodb")
@@ -64,7 +64,7 @@ def main():
         nets = client.networks.list()
 
     mongo = init_mongo()
-    progmmo = client.containers.run("progmmo", network="dblan", ports={'8080/tcp':8080, '443/tcp':443}, name="progmmo", detach=True, hostname="progmmo")
+    progmmo = client.containers.run("progmmo", network="dblan", ports={'8080/tcp':8080, '443/tcp':443, '80/tcp':80}, name="progmmo", detach=True, hostname="progmmo")
     print("launching container")
 
 if __name__ == "__main__":
@@ -74,19 +74,20 @@ if __name__ == "__main__":
     parser.add_argument('--containers', help="clean host containers before running", action="store_true")
     parser.add_argument('--volumes', help="clean host volumes before running", action="store_true")
     parser.add_argument('--networks', help="clean host networks before running", action="store_true")
+    parser.add_argument('--clean', help="clean all networks, containers, images, and volumes from the host", action="store_true")
     parser.add_argument('--nolaunch', help="do not launch the new containers, only clean the existing ones and exit", action="store_true")
     args = parser.parse_args()
 
-    if args.containers:
+    if args.containers or args.clean:
         clean("containers", force=True)
 
-    if args.images:
+    if args.images or args.clean:
         clean("images", force=True)
 
-    if args.volumes:
+    if args.volumes or args.clean:
         clean("volumes", force=True)
 
-    if args.networks:
+    if args.networks or args.clean:
         clean("networks")
 
     if not(args.nolaunch):
