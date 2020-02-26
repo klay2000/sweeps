@@ -8,10 +8,21 @@ import progmmo.server.apikey.APIKey;
 import progmmo.server.apikey.APIKeyRepository;
 import progmmo.server.command.Command;
 import progmmo.server.command.CommandRepository;
+import progmmo.server.config.EmailConfig;
 import progmmo.server.entity.Entity;
 import progmmo.server.entity.EntityRepository;
 import progmmo.server.utils.CommandType;
 import progmmo.server.utils.Direction;
+import progmmo.server.utils.EmailSender;
+
+import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.security.MessageDigest;
+import java.util.Properties;
 
 @SpringBootApplication
 public class ServerApplication implements CommandLineRunner {
@@ -28,10 +39,6 @@ public class ServerApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-
-//        apiKeyRepository.save(new APIKey("bleep", APIKey.generateHash("bleep", "123")));
-//
-//        commandRepository.save(new Command(Direction.north, CommandType.attack, "1"));
 
     }
 }

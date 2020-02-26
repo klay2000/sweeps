@@ -11,12 +11,14 @@ import java.security.NoSuchAlgorithmException;
 @Document(collection = "apikey")
 public class APIKey {
 
-    public APIKey(String prefix, byte[] hash){
+    public APIKey(String prefix, String email, byte[] hash){
 
         if(prefix.length() > 25) this.prefix = prefix.substring(0, 25);
         else this.prefix = prefix;
 
         this.hash = hash;
+
+        this.email = email;
 
     }
 
@@ -25,18 +27,9 @@ public class APIKey {
     @Indexed(unique = true, name = "APIKey_Prefix_Index")
     private String prefix;
 
+    private String email;
+
     private int entitiesCreated = 0;
-
-    public static byte[] generateHash(String prefix, String key) {
-        try {
-            MessageDigest hasher = MessageDigest.getInstance("SHA-256");
-
-            return hasher.digest((prefix+key).getBytes("UTF_16"));
-
-        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) { e.printStackTrace();}
-
-        return new byte[0];
-    }
 
     public String getPrefix(){
         return prefix;
@@ -49,4 +42,27 @@ public class APIKey {
     public int getEntityIndex(){
         return entitiesCreated++;
     }
+
+    public static byte[] generateHash(String prefix, String key) {
+        try {
+            MessageDigest hasher = MessageDigest.getInstance("SHA-256");
+
+            return hasher.digest((prefix+key).getBytes("UTF_16"));
+
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) { e.printStackTrace();}
+
+        return new byte[0];
+    }
+
+    public static byte[] generateHash(String key) {
+        try {
+            MessageDigest hasher = MessageDigest.getInstance("SHA-256");
+
+            return hasher.digest((key).getBytes("UTF_16"));
+
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) { e.printStackTrace();}
+
+        return new byte[0];
+    }
+
 }
