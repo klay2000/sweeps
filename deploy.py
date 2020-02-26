@@ -64,7 +64,7 @@ def main():
         nets = client.networks.list()
 
     mongo = init_mongo()
-    progmmo = client.containers.run("progmmo", network="dblan", ports={'8080/tcp':8080, '443/tcp':443, '80/tcp':80}, name="progmmo", detach=True, hostname="progmmo")
+    progmmo = client.containers.run("progmmo", network="dblan", ports={'8080/tcp':8080, '465/tcp':465, '443/tcp':443, '80/tcp':80}, name="progmmo", detach=True, hostname="progmmo")
     print("launching container")
 
 if __name__ == "__main__":
