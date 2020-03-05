@@ -2,33 +2,28 @@
 
 import argparse
 import docker
-import os
 
 client = docker.from_env()
-llApiClient = docker.APIClient(base_url='unix://var/run/docker.sock')
+llAPI = docker.APIClient(base_url='unix://var/run/docker.sock')
 host_images = [ n for n in client.images.list(all=True) if not(n.tags == [])]
 host_containers = [ n for n in client.containers.list(all=True) ]
 
 
-def init_mongo(ip='172.17.0.2'):
-    # container = llApiClient.create_container(
-    #     'mongo',
-    #     ports=[27017],
-    #     detach=True,
-    #     hostname="mongo",
-    #     name="mongodb",
-    #     networking_config=llApiClient.create_networking_config({
-    #         'dblan': llApiClient.create_endpoint_config(ipv4_address='172.17.0.2',
-    #                                                     aliases=['mongo']),
-    #     })
-    # )
+def init_mongo():
     print("initializing mongo")
-    container = client.containers.run("mongo",
+    if "mongodb" in [n.name for n in client.containers.list(all=True)]:
+        return client.containers.get("mongodb")
+    else:
+        return client.containers.run("mongo",
                                       hostname="mongodb",
                                       network="dblan",
                                       name="mongodb",
                                       detach=True)
-    return container
+
+# TODO: use this
+def init_volume():
+    print("Verifying storage volume")
+    return client.volumes.create("database", driver='local') if not("database" in [ n.name for n in client.volumes.list() ]) else client.volumes.get("database")
 
 # make sure host has all necessary containers
 def check_dependencies(deps):
@@ -38,17 +33,23 @@ def check_dependencies(deps):
                 client.images.pull(i)
 
 
-def clean_containers():
-    print("cleaning containers")
-    for c in host_containers:
-        c.remove(force=True)
+# needs to be either "containers", "images", "networks", or "volumes"
+def clean(mode, force=False):
+    print("cleaning", mode)
+    targets = getattr(client, mode).list() if mode=="volumes" or mode=="networks" else getattr(client, mode).list(all=True)
+    for i in targets:
+        try:
+            if force:
+                i.remove(force=True)
+            else:
+                i.remove()
+        except:
+            continue
 
-
-def clean_images():
-    print("cleaning images")
-    for i in host_images:
-        client.images.remove(i.id, force=True)
-
+def init_networks():
+    dblan = client.networks.create("dblan", driver="overlay", internal=False, check_duplicate=True, attachable=True)
+    print(dblan)
+    return dblan
 
 def main():
     check_dependencies(["mongo:latest", "openjdk:latest"])
@@ -57,29 +58,37 @@ def main():
         client.images.build(path=".", tag="progmmo")
         print("container built successfully")
 
-    # assemble everything into networks
-    # docker will create duplicate networks without protest so this check needs to be here
-    dblan = filter(lambda n: n.name == "dblan", client.networks.list()).__next__() if "dblan" in [n.name for n in client.networks.list() ] else client.networks.create("dblan", driver="bridge", internal=True)
-    mongo = init_mongo() if not("mongo:latest" in host_containers) else client.containers.get("mongodb")
-    progmmo = client.containers.run("progmmo",
-                                    network=dblan.id,
-                                    ports={'80/tcp':8080},
-                                    name="progmmo",
-                                    detach=True,
-                                    hostname="progmmo")
+    try:
+        nets = init_networks()
+    except:
+        nets = client.networks.list()
+
+    mongo = init_mongo()
+    progmmo = client.containers.run("progmmo", network="dblan", ports={'8080/tcp':8080, '465/tcp':465}, name="progmmo", detach=True, hostname="progmmo")
     print("launching container")
-    for l in progmmo.logs():
-        print(l)
 
 if __name__ == "__main__":
+    # TODO: the parameters should really just be --clean (mode) and --nolaunch
     parser = argparse.ArgumentParser()
     parser.add_argument('--images', help="clean host images before running", action="store_true")
     parser.add_argument('--containers', help="clean host containers before running", action="store_true")
+    parser.add_argument('--volumes', help="clean host volumes before running", action="store_true")
+    parser.add_argument('--networks', help="clean host networks before running", action="store_true")
+    parser.add_argument('--clean', help="clean all networks, containers, images, and volumes from the host", action="store_true")
+    parser.add_argument('--nolaunch', help="do not launch the new containers, only clean the existing ones and exit", action="store_true")
     args = parser.parse_args()
 
-    if args.containers:
-        clean_containers()
+    if args.containers or args.clean:
+        clean("containers", force=True)
 
-    if args.images:
-        clean_images()
-    main()
+    if args.images or args.clean:
+        clean("images", force=True)
+
+    if args.volumes or args.clean:
+        clean("volumes", force=True)
+
+    if args.networks or args.clean:
+        clean("networks")
+
+    if not(args.nolaunch):
+        main()
