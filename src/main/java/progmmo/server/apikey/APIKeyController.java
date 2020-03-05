@@ -5,9 +5,12 @@ import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.*;
 import progmmo.server.apikey.unconfirmedkey.UnconfirmedAPIKey;
 import progmmo.server.apikey.unconfirmedkey.UnconfirmedAPIKeyRepository;
+import progmmo.server.entity.Entity;
+import progmmo.server.entity.EntityRepository;
 import progmmo.server.utils.EmailSender;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -24,6 +27,9 @@ public class APIKeyController {
 
     @Autowired
     private EmailSender emailSender;
+
+    @Autowired
+    private EntityRepository entityRepository;
 
     @RequestMapping(value = "{prefix}", method = RequestMethod.POST)
     public Map<String, String> createAPIKey(@PathVariable("prefix") String prefix, @RequestBody Map<String, Object> body){
@@ -79,6 +85,17 @@ public class APIKeyController {
         unconfirmedRepository.deleteByPrefix(prefix);
 
         response.put("response", "Success! Your key has been confirmed, you may now use it.");
+        return response;
+    }
+
+    @RequestMapping(value = "{prefix}/entities", method = RequestMethod.POST)
+    public Map<String, String> getEntities(@PathVariable("prefix")String prefix, @RequestBody Map<String, String> body){
+        HashMap response = new HashMap();
+
+        List<Entity> entities = entityRepository.findByOwnerPrefix(prefix);
+        if(entities == null) response.put("response", "That prefix owns no entities or doesn't exist.");
+        else response.put("entities", entities);
+
         return response;
     }
 

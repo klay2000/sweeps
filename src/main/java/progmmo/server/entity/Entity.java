@@ -9,6 +9,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public abstract class Entity {
 
+    Entity(int x, int y, String sectorID, String ownerPrefix, String entityIdentifier, float energy){
+        this.x = x;
+        this.y = y;
+        this.sector = sectorID;
+        this.ownerPrefix = ownerPrefix;
+        this.entityIdentifier = entityIdentifier;
+    }
+
     //Strings that make up ID of this entity
     private String ownerPrefix;
     private String entityIdentifier;
@@ -45,4 +53,7 @@ public abstract class Entity {
     public float getEnergy() {
         return energy;
     }
+
+    public String getOwnerPrefix() { return ownerPrefix; }
+
 }
