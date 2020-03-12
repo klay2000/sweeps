@@ -1,101 +1,53 @@
-package progmmo.server.utils.terrain;
+import org.omg.CORBA.DynAnyPackage.Invalid;
 
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: We're rewriting this whole bitch, possibly from the ground up
+//TODO reimplement creating world with size parameters
+//TODO relative cell retrieval methods
 public class World {
-    public ArrayList<List<Sector>> data;
+    public ArrayList<List<Boolean>> map;
+    public int sectorWidth;
+    public int worldWidth;
 
     public World() {
-        data = new ArrayList<List<Sector>>(10);
-        for (int xw=0; xw < 10; xw++) {
-            ArrayList<Sector> sectorRow = new ArrayList<Sector>();
-            data.add(sectorRow);
-            for (int yw = 0; yw < 10; yw++) {
-                StringBuilder sectorID = new StringBuilder();
-                sectorID.append(xw);
-                sectorID.append(".");
-                sectorID.append(yw);
+        map = new ArrayList<List<Boolean>>(sectorWidth*worldWidth);
+        sectorWidth = 25;
+        worldWidth = 10;
 
-                Sector s = new Sector(this, 25, sectorID.toString());
-                sectorRow.add(s);
-                for (int xs = 0; xs < 25; xs++) {
-                    for (int ys = 0; ys < 10; ys++) {
-                        data.get(xw).get(yw).setCell(xs, ys, false);
-                    }
-                }
+        for (int y=0; y < sectorWidth*worldWidth; y++) {
+            map.add(new ArrayList<Boolean>(sectorWidth*worldWidth));
+            for (int x=0; x < sectorWidth*worldWidth; x++) {
+                map.get(y).add(x, false);
             }
         }
     }
 
-    public World(int numSectors) {
-        data = new ArrayList<List<Sector>>(numSectors);
-        for (int xw=0; xw < numSectors; xw++) {
-            ArrayList<Sector> sectorRow = new ArrayList<Sector>();
-            data.add(sectorRow);
-            for (int yw = 0; yw < numSectors; yw++) {
-                Sector s = new Sector();
-                sectorRow.add(s);
-                StringBuilder sectorID = new StringBuilder();
-                sectorID.append(xw);
-                sectorID.append(".");
-                sectorID.append(yw);
-                s.ID = sectorID.toString();
-                for (int xs = 0; xs < 25; xs++) {
-                    for (int ys = 0; ys < 25; ys++) {
-                        data.get(xw).get(yw).setCell(xs, ys, false);
-                    }
-                }
-            }
+    public int size() {
+        return sectorWidth*worldWidth;
+    }
+
+    public Boolean getCell(int x, int y) {
+        Boolean r;
+        try {
+            r = map.get(x).get(y);
+        } catch (Exception e) {
+            r = null;
         }
+        return r;
     }
 
-    public static Sector asSector(World data) {
-        Sector sector = new Sector(data.getSectorSize()*data.getSectorRowSize());
-        for (int yw=0; yw<data.getSectorRowSize(); yw++) {
-            for (int ys=0; ys<data.getSector(0, 0).size(); ys++) {
-                for (int xw=0; xw<data.getSectorRowSize(); xw++) {
-                    for (int xs=0; xs<data.getSector(0, 0).size(); xs++) {
-                        int x = (xw*data.getSector(0, 0).size())+xs;
-                        int y = (yw*data.getSector(0, 0).size())+ys;
-                        sector.setCell(x, y, data.getSector(xw, yw).getCell(xs, ys).getState());
-                    }
-                }
-            }
-        }
-        return sector;
+    public void setCell(int x, int y, boolean state) {
+        map.get(x).set(y, state);
     }
 
-    //TODO use this for error handling in terrain generation
-    public Cell getGlobalCell(int x, int y) throws InvalidPositionException {
-        int sectorX = x/this.getSector(0, 0).size();
-        int sectorY = y/this.getSector(0, 0).size();
-        Sector parent = this.getSector(sectorX, sectorY);
-        int cellX = x%this.getSector(0, 0).size();
-        int cellY = y%this.getSector(0, 0).size();
-        return parent.getCell(cellX, cellY);
+    public Boolean[][] getSurround(int x, int y) {
+        Boolean[][] surround = {
+                {this.getCell(x-1, y-1), this.getCell(x, y-1), this.getCell(x+1, y-1)},
+                {this.getCell(x-1, y), this.getCell(x, y), this.getCell(x+1, y)},
+                {this.getCell(x-1, y+1), this.getCell(x, y+1), this.getCell(x+1, y+1)}
+        };
+        return surround;
     }
-
-    //TODO
-    public void generate() {
-        for (int x=0; x<this.getSectorRowSize(); x++) {
-            for (int y=0; y<this.getSectorRowSize(); y++) {
-                Transform.populateRandom(this.getSector(x, y), 50);
-                Transform.generateWalls(this.getSector(x, y), 4);
-            }
-        }
-    }
-
-    public int getSectorSize() {
-        return this.getSector(0, 0).size();
-    }
-
-    public int getSectorRowSize() {
-        return this.data.get(0).size();
-    }
-
-    public Sector getSector(int x, int y) {
-        return this.data.get(x).get(y);
-    }
-    public void setSector(int x, int y, Sector data) { this.data.get(x).set(y, data);}
 }
