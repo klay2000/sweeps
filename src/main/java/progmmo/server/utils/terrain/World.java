@@ -50,4 +50,12 @@ public class World {
         };
         return surround;
     }
+
+    public void applyFunction(WorldOperation fun) {
+        for (int x=0; x<this.size(); x++) {
+            for (int y=0; y<this.size(); y++) {
+                fun.doAt(x, y);
+            }
+        }
+    }
 }
