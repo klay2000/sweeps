@@ -4,16 +4,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import progmmo.server.apikey.APIKey;
 import progmmo.server.apikey.APIKeyRepository;
+import progmmo.server.command.Command;
+import progmmo.server.command.CommandRepository;
+import progmmo.server.config.EmailConfig;
+import progmmo.server.entity.Entity;
+import progmmo.server.entity.EntityRepository;
+import progmmo.server.utils.CommandType;
+import progmmo.server.utils.Direction;
+import progmmo.server.utils.EmailSender;
+
+import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.security.MessageDigest;
+import java.util.Properties;
 
 @SpringBootApplication
 public class ServerApplication implements CommandLineRunner {
 
     @Autowired
-    private APIKeyRepository repository;
+    private APIKeyRepository apiKeyRepository;
+
+    @Autowired
+    private CommandRepository commandRepository;
 
     public static void main(String [] args) {
         SpringApplication.run(ServerApplication.class, args);
@@ -21,16 +39,6 @@ public class ServerApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-
-        repository.save(new APIKey("bleep", APIKey.generateHash("bleep", "123")));
-
-        System.out.println(repository.findByPrefix("bleep").getPrefix());
-
-        repository.deleteByPrefix("bleep");
-
-        System.out.println("WILL CRASH");
-
-       // System.out.println(repository.findByPrefix("bleep").getPrefix());
 
     }
 }
