@@ -23,7 +23,7 @@ public class EmailSender {
         Properties prop = System.getProperties();
 
         prop.put("mail.smtp.host", eConf.getHost());
-        prop.put("mail.smtp.port", "25");
+        prop.put("mail.smtp.port", "587");
         prop.put("mail.smtp.starttls.enable", "true");
         prop.put("mail.smtp.auth", "true");
 

@@ -24,6 +24,9 @@ public class APIKey {
 
     private byte[] hash;
 
+    @Id
+    public String _id;
+
     @Indexed(unique = true, name = "APIKey_Prefix_Index")
     private String prefix;
 

@@ -8,10 +8,10 @@ package progmmo.server.sector;
 public class Sector {
 
     public Sector(String id){
-        this.id = id;
+        this.ID = id;
     }
 
-    private String id; // Format is (x coord):(y coord), ex 1:2 for sector at 1, 2.
+    private String ID; // Format is (x coord):(y coord), ex 1:2 for sector at 1, 2.
 
-    public String getId(){ return id; }
+    public String getID(){ return ID; }
 }

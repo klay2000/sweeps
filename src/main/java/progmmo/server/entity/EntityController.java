@@ -1,10 +1,7 @@
 package progmmo.server.entity;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import progmmo.server.apikey.APIKey;
 import progmmo.server.apikey.APIKeyRepository;
 import progmmo.server.apikey.unconfirmedkey.UnconfirmedAPIKey;
@@ -43,13 +40,13 @@ public class EntityController {
     }
 
     @RequestMapping(value="/{entityID}", method = RequestMethod.POST)
-    Map<String, Object> addEntity(@PathVariable("entityID")String entityID, Map<String, String> body){
+    Map<String, Object> addEntity(@PathVariable("entityID")String entityID, @RequestBody Map<String, String> body){
         HashMap<String, Object> response = new HashMap<>();
 
         APIKey key = apiKeyRepository.findByHash(APIKey.generateHash(body.get("APIKey")));
         int x = 0;
         int y = 0;
-        String sectorID = body.get("SectorID");
+        String sectorID = body.get("sectorID");
         String idSegment = body.get("IDSegment");
 
         //ensure all values are entered and valid
@@ -105,9 +102,11 @@ public class EntityController {
             }
         }
 
-        Entity entity = new Bot(x, y, sectorID, key.getPrefix(), idSegment);
+        Entity entity = new Bot(x, y, sectorID, key.getPrefix(), idSegment, key.getEntityIndex());
 
         entityRepository.save(entity);
+
+        apiKeyRepository.save(key);
 
         response.put("response", "Entity created successfully.");
 
@@ -115,7 +114,7 @@ public class EntityController {
     }
 
     @RequestMapping(value="/{entityID}", method = RequestMethod.DELETE)
-    Map<String, Object> deleteEntity(@PathVariable("entityID")String entityID, Map<String, String> body){
+    Map<String, Object> deleteEntity(@PathVariable("entityID")String entityID, @RequestBody Map<String, String> body){
         HashMap<String, Object> response = new HashMap<>();
         String key = body.get("APIKey");
         APIKey keyObj = apiKeyRepository.findByHash(APIKey.generateHash(key));

@@ -9,18 +9,24 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public abstract class Entity {
 
-    Entity(int x, int y, String sectorID, String ownerPrefix, String entityIdentifier, float energy){
+    Entity(int x, int y, String sector, String ownerPrefix, String entityIdentifier, int entityIndex, float energy){
         this.x = x;
         this.y = y;
-        this.sector = sectorID;
+        this.sector = sector;
         this.ownerPrefix = ownerPrefix;
         this.entityIdentifier = entityIdentifier;
+        ID = ownerPrefix+entityIdentifier+entityIndex;
     }
+
+    @Id
+    public String _id;
 
     //Strings that make up ID of this entity
     private String ownerPrefix;
     private String entityIdentifier;
     private int entityIndex;
+
+    private String ID;
 
     //The ID of the sector this entity is in.
     private String sector;
@@ -45,9 +51,12 @@ public abstract class Entity {
         return y;
     }
 
-    @AccessType(Type.PROPERTY)
     public String getID(){
-        return ownerPrefix+entityIdentifier+entityIndex;
+        return ID;
+    }
+
+    protected void setID(String ID){
+        this.ID = ID;
     }
 
     public float getEnergy() {
