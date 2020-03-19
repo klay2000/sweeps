@@ -1,3 +1,5 @@
+package progmmo.server.utils.terrain;
+
 import java.awt.*;
 import java.io.File;
 import java.lang.StringBuilder;
