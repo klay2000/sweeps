@@ -1,34 +1,21 @@
 package progmmo.server.utils.terrain;
 
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Transform {
     //this is a percentage
-    private static int randomThreshold = 50;
-
-    public static void populateRandom(World world) {
-        world.applyFunction((x, y) -> {
-            Random rand = new Random();
-            if (rand.nextInt(100) < randomThreshold) {
-                world.setCell(x, y, true);
-            }
-        });
-    }
-
-    public static void populateRandom(World world, int threshold) {
-        world.applyFunction((x, y) -> {
-            Random rand = new Random();
+    private static byte[] seed = WorldOperation.hexStringToByteArray("000000000000");
+    public static Random rand = new Random();
+    // this is a list of all of the function objects for algorithms, sorry it's kind
+    // of a weird solution, I promise there's a reason
+    public static Map<String, WorldManipulation> Operations = new HashMap<String , WorldManipulation>() {{
+        put("PopulateRandom", (World world, int x, int y, int threshold) -> {
             if (rand.nextInt(100) < threshold) {
                 world.setCell(x, y, true);
             }
         });
-    }
 
-    public static void thinStrayWalls(World world) {
-        world.applyFunction((x, y) -> {
+        put("thinStrayWalls", (World world, int x, int y, int threshold)-> {
             Boolean[][] block = world.getSurround(x, y);
             //substituting false for null because false != null and null doesn't like being compared
             for (int px = 0; px <= 2; px++) {
@@ -43,32 +30,8 @@ public class Transform {
                 //Syste>m.out.printf("====================\n%s\n%s\n%s\n====================\n", Arrays.asList(block[0]), Arrays.asList(block[1]), Arrays.asList(block[2]));
             }
         });
-    }
 
-    public static void shapeWalls(World world) {
-        world.applyFunction((x, y) -> {
-            Boolean[][] block = world.getSurround(x, y);
-            int count = 0;
-            for (int xo=0; xo<=2; xo++) {
-                for (int yo=0; yo<=2; yo++) {
-                    if (block[xo][yo] == null) {
-                        break;
-                    } else if (block[xo][yo] == true) {
-                        count++;
-                    }
-                }
-            }
-            if (count >= 5) {
-                world.setCell(x, y, true);
-            } else {
-                world.setCell(x, y, false);
-            }
-        });
-    }
-
-    //this threshold is 0-8
-    public static void shapeWalls(World world, int threshold) {
-        world.applyFunction((x, y) -> {
+        put("shapeWalls", (World world, int x, int y, int threshold)->{
             Boolean[][] block = world.getSurround(x, y);
             int count = 0;
             for (int xo=0; xo<=2; xo++) {
@@ -84,5 +47,5 @@ public class Transform {
                 world.setCell(x, y, false);
             }
         });
-    }
+    }};
 }

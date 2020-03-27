@@ -14,6 +14,7 @@ import progmmo.server.entity.EntityRepository;
 import progmmo.server.utils.CommandType;
 import progmmo.server.utils.Direction;
 import progmmo.server.utils.EmailSender;
+import progmmo.server.utils.terrain.World;
 
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
@@ -35,6 +36,7 @@ public class ServerApplication implements CommandLineRunner {
 
     public static void main(String [] args) {
         SpringApplication.run(ServerApplication.class, args);
+        World map = World.GenerateNew();
     }
 
     @Override

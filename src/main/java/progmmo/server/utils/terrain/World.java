@@ -28,6 +28,18 @@ public class World {
         }
     }
 
+    public World(WorldOperation sequence[]) {
+        for (int i=0; i<sequence.length; i++) {
+
+        }
+    }
+
+    public static World GenerateNew() {
+        World r = new World();
+        r.generate(WorldOperation.hexStringToByteArray("1234567890ab"));
+        return r;
+    }
+
     public int size() {
         return sectorWidth*worldWidth;
     }
@@ -70,11 +82,21 @@ public class World {
         return surround;
     }
 
-    public void applyFunction(WorldOperation fun) {
+    public void applyFunction(String name, int threshold) {
         for (int x=0; x<this.size(); x++) {
             for (int y=0; y<this.size(); y++) {
-                fun.doAt(x, y);
+                Transform.Operations.get(name).doAt(this, x, y, threshold);
             }
+        }
+    }
+
+    public void generate(byte[] seed) {
+        this.applyFunction("populateRandom", 45);
+    }
+
+    public void generate(WorldOperation funs[]) {
+        for (int i=0; i<funs.length; i++) {
+            this.applyFunction(funs[i].name, funs[i].threshold);
         }
     }
 }
