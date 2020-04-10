@@ -2,6 +2,8 @@ package progmmo.server.utils.terrain;
 
 import org.omg.CORBA.DynAnyPackage.Invalid;
 import progmmo.server.entity.Entity;
+import progmmo.server.entity.EntityController;
+import progmmo.server.entity.EntityRepository;
 import progmmo.server.entity.Wall;
 
 import java.util.ArrayList;
@@ -58,19 +60,17 @@ public class World {
         map.get(x).set(y, state);
     }
 
-    public ArrayList<Entity> serialize() {
-        ArrayList<Entity> list = new ArrayList<Entity>();
+    public void writeTo(EntityRepository entityRepository) {
         for (int y=0; y<this.size(); y++) {
             for (int x=0; x<this.size(); x++) {
                 if (this.getCell(x, y)) {
                     int sx = x%this.sectorWidth;
                     int sy = y%this.sectorWidth;
                     String sectorID = String.format("%d.%d", (int) x/this.sectorWidth, (int) y/this.sectorWidth);
-                    list.add(new Wall(sx, sy, sectorID));
+                    entityRepository.save(new Wall(sx, sy, sectorID));
                 }
             }
         }
-        return list;
     }
 
     public Boolean[][] getSurround(int x, int y) {

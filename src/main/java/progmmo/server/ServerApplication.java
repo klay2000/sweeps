@@ -34,13 +34,16 @@ public class ServerApplication implements CommandLineRunner {
     @Autowired
     private CommandRepository commandRepository;
 
+    @Autowired
+    private EntityRepository entityRepository;
+
     public static void main(String [] args) {
         SpringApplication.run(ServerApplication.class, args);
-        World map = World.GenerateNew();
     }
 
     @Override
     public void run(String... args) throws Exception {
-
+        World map = World.GenerateNew();
+        map.writeTo(entityRepository);
     }
 }

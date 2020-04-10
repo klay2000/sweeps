@@ -25,8 +25,8 @@ public class EntityController {
     @Autowired
     private APIKeyRepository apiKeyRepository;
 
-    @Autowired
-    private SectorRepository sectorRepository;
+    //@Autowired
+    //private SectorRepository sectorRepository;
 
     @Autowired
     private MapConfig mapConfig;
@@ -93,9 +93,9 @@ public class EntityController {
         }
 
         //check if sector exists
-        if(sectorRepository.findByID(sectorID) == null){
+        //if(sectorRepository.findByID(sectorID) == null){
             //TODO: generate sector
-        }
+        //}
 
         //check if position is taken by another entity
         for(Entity i : entityRepository.findBySector(sectorID)){
@@ -136,4 +136,7 @@ public class EntityController {
         return response;
     }
 
+    public void saveEntity(Entity e) {
+        entityRepository.save(e);
+    }
 }
